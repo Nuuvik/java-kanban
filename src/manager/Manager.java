@@ -128,7 +128,7 @@ public class Manager {
 
     // 2.6 Удаление по идентификатору (subtasks)
     public void deleteSubtask(int id) {
-       Subtask deletedId = subtasks.remove(id);
+        Subtask deletedId = subtasks.remove(id);
         updateEpicStatus(deletedId.getEpicId());
     }
 
