@@ -5,6 +5,7 @@ import tasks.Subtask;
 import tasks.Task;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface TaskManager {
     // 2.1 Получение списка всех задач (tasks)
@@ -59,6 +60,7 @@ public interface TaskManager {
 
     void updateEpicStatus(Integer id);
 
-
+    // История просмотра задач
+    List<Task> getHistory();
 
 }
