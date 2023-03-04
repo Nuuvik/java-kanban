@@ -1,4 +1,4 @@
-package manager;
+package managers;
 
 import tasks.Epic;
 import tasks.Subtask;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class Manager {
+public class InMemoryTaskManager implements TaskManager {
     private HashMap<Integer, Task> tasks = new HashMap<>();
     private HashMap<Integer, Epic> epics = new HashMap<>();
     private HashMap<Integer, Subtask> subtasks = new HashMap<>();
@@ -19,6 +19,7 @@ public class Manager {
     private int generatedId = 1;  //генерация id
 
     // 2.1 Получение списка всех задач (tasks)
+    @Override
     public ArrayList<Task> getListOfTasks() {
         ArrayList<Task> list = new ArrayList<>();
         for (Integer task : tasks.keySet()) {
@@ -28,6 +29,7 @@ public class Manager {
     }
 
     // 2.1 Получение списка всех задач (epics)
+    @Override
     public ArrayList<Epic> getListOfEpics() {
         ArrayList<Epic> list = new ArrayList<>();
         for (Integer epic : epics.keySet()) {
@@ -37,6 +39,7 @@ public class Manager {
     }
 
     // 2.1 Получение списка всех задач (subtasks)
+    @Override
     public ArrayList<Subtask> getListOfSubtasks() {
         ArrayList<Subtask> list = new ArrayList<>();
         for (Integer subtask : subtasks.keySet()) {
@@ -46,21 +49,25 @@ public class Manager {
     }
 
     //2.3 Получение по идентификатору (tasks)
+    @Override
     public Task getTaskById(int id) {
         return tasks.get(id);
     }
 
     //2.3 Получение по идентификатору (epics)
+    @Override
     public Epic getEpicById(int id) {
         return epics.get(id);
     }
 
     //2.3 Получение по идентификатору (subtasks)
+    @Override
     public Subtask getSubtaskById(int id) {
         return subtasks.get(id);
     }
 
     //2.4 Создание (tasks)
+    @Override
     public Integer createTask(Task task) {
         task.setId(generatedId++);
         tasks.put(task.getId(), task);
@@ -68,6 +75,7 @@ public class Manager {
     }
 
     //2.4 Создание (epics)
+    @Override
     public Integer createEpic(Epic epic) {
         epic.setId(generatedId++);
         ArrayList<Integer> arrayList = updateSubtasksInEpic(epic);
@@ -77,6 +85,7 @@ public class Manager {
     }
 
     //2.4 Создание (subtasks)
+    @Override
     public Integer createSubtask(Subtask subtask) {
         subtask.setId(generatedId++);
         subtasks.put(subtask.getId(), subtask);
@@ -91,6 +100,7 @@ public class Manager {
     }
 
     //2.5 Обновление (tasks)
+    @Override
     public void updateTask(Task task) {
         if (tasks.containsKey(task.getId())) {
             tasks.put(task.getId(), task);
@@ -98,6 +108,7 @@ public class Manager {
     }
 
     //2.5 Обновление (subtasks)
+    @Override
     public void updateSubtask(Subtask subtask) {
         subtasks.put(subtask.getId(), subtask);
         Epic epic = epics.get(subtask.getEpicId());
@@ -106,17 +117,20 @@ public class Manager {
     }
 
     //2.5 Обновление (epics)
+    @Override
     public void updateEpic(Epic epic) {
         epics.put(epic.getId(), epic);
         updateEpicStatus(epic.getId());
     }
 
     // 2.6 Удаление по идентификатору (tasks)
+    @Override
     public void deleteTask(int id) {
         tasks.remove(id);
     }
 
     // 2.6 Удаление по идентификатору (epics)
+    @Override
     public void deleteEpic(int id) {
         for (Integer key : subtasks.keySet()) {
             if (Objects.equals(subtasks.get(key).getEpicId(), id)) {
@@ -127,12 +141,14 @@ public class Manager {
     }
 
     // 2.6 Удаление по идентификатору (subtasks)
+    @Override
     public void deleteSubtask(int id) {
         Subtask deletedId = subtasks.remove(id);
         updateEpicStatus(deletedId.getEpicId());
     }
 
     //3.1 Получение списка всех подзадач определённого эпика
+    @Override
     public ArrayList<Subtask> getSubtaskListByEpicId(Integer id) {
         ArrayList<Subtask> currentList = new ArrayList<>();
         for (Integer currentSubtask : epics.get(id).getSubtaskIds()) {
@@ -142,7 +158,8 @@ public class Manager {
     }
 
 
-    private ArrayList<Integer> updateSubtasksInEpic(Epic epic) {
+    @Override
+    public ArrayList<Integer> updateSubtasksInEpic(Epic epic) {
         ArrayList<Integer> listOfSubtaskId = new ArrayList<>();
 
         for (Integer subtaskId : epic.getSubtaskIds()) {
@@ -155,7 +172,8 @@ public class Manager {
     }
 
 
-    private void updateEpicStatus(Integer id) {
+    @Override
+    public void updateEpicStatus(Integer id) {
         try {
             Integer countOfNew = 0;
             Integer countOfDone = 0;
