@@ -4,7 +4,7 @@ public class Task {
     protected Integer taskId;
     protected String title;
     protected String description;
-    protected String status;
+    protected Status status;
 
     public Task(String title, String description) {
         this.title = title;
@@ -17,13 +17,13 @@ public class Task {
         this.description = description;
     }
 
-    public Task(String title, String description, String status) {
+    public Task(String title, String description, Status status) {
         this.title = title;
         this.description = description;
         this.status = status;
     }
 
-    public Task(Integer taskId, String title, String description, String status) {
+    public Task(Integer taskId, String title, String description, Status status) {
         this.title = title;
         this.description = description;
         this.status = status;
@@ -34,7 +34,7 @@ public class Task {
         this.taskId = taskId;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -50,7 +50,7 @@ public class Task {
         return description;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 

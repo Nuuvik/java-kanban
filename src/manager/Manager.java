@@ -3,6 +3,9 @@ package manager;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
+import static tasks.Status.NEW;
+import static tasks.Status.IN_PROGRESS;
+import static tasks.Status.DONE;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,7 +63,6 @@ public class Manager {
     //2.4 Создание (tasks)
     public Integer createTask(Task task) {
         task.setId(generatedId++);
-        task.setStatus("NEW");
         tasks.put(task.getId(), task);
         return generatedId - 1;
     }
@@ -68,7 +70,6 @@ public class Manager {
     //2.4 Создание (epics)
     public Integer createEpic(Epic epic) {
         epic.setId(generatedId++);
-        epic.setStatus("NEW");
         ArrayList<Integer> arrayList = updateSubtasksInEpic(epic);
         epic.setSubtaskIds(arrayList);
         epics.put(epic.getId(), epic);
@@ -78,7 +79,6 @@ public class Manager {
     //2.4 Создание (subtasks)
     public Integer createSubtask(Subtask subtask) {
         subtask.setId(generatedId++);
-        subtask.setStatus("NEW");
         subtasks.put(subtask.getId(), subtask);
         ArrayList<Integer> newSubtaskList = updateSubtasksInEpic(epics.get(subtask.getEpicId()));
         Epic epic = epics.get(subtask.getEpicId());
@@ -162,23 +162,23 @@ public class Manager {
             Integer countOfSubtask = epics.get(id).getSubtaskIds().size();
 
             for (Integer subtaskID : epics.get(id).getSubtaskIds()) {
-                if (Objects.equals(subtasks.get(subtaskID).getStatus(), "NEW")) {
+                if (subtasks.get(subtaskID).getStatus() == NEW) {
                     countOfNew++;
-                } else if (Objects.equals(subtasks.get(subtaskID).getStatus(), "DONE")) {
+                } else if (subtasks.get(subtaskID).getStatus() == DONE) {
                     countOfDone++;
                 }
             }
             if (countOfNew.equals(countOfSubtask) || (countOfSubtask == 0)) {
                 Epic epic = epics.get(id);
-                epic.setStatus("NEW");
+                epic.setStatus(NEW);
                 epics.put(id, epic);
             } else if (countOfDone.equals(countOfSubtask)) {
                 Epic epic = epics.get(id);
-                epic.setStatus("DONE");
+                epic.setStatus(DONE);
                 epics.put(id, epic);
             } else {
                 Epic epic = epics.get(id);
-                epic.setStatus("IN_PROGRESS");
+                epic.setStatus(IN_PROGRESS);
                 epics.put(id, epic);
             }
         } catch (NullPointerException e) {

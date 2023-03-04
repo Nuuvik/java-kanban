@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class Epic extends Task {
     protected ArrayList<Integer> subtaskIds; //список айдишников сабтасков
+    protected Status status;
 
     public Epic(String title, String description) {
         super(title, description);
