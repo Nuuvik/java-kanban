@@ -1,18 +1,14 @@
 package managers;
 
-import tasks.Task;
-
-import java.util.List;
 
 public class Managers {
-    TaskManager taskManager = new InMemoryTaskManager();
-    HistoryManager historyManager = new InMemoryHistoryManager();
 
-    TaskManager getDefault() {
-        return taskManager;
+
+    static TaskManager getDefault() {
+        return new InMemoryTaskManager();
     }
 
-    List<Task> getDefaultHistory() {
-        return historyManager.getHistory();
+    static HistoryManager getDefaultHistory() {
+        return new InMemoryHistoryManager();
     }
 }

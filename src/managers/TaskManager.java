@@ -56,9 +56,7 @@ public interface TaskManager {
     //3.1 Получение списка всех подзадач определённого эпика
     ArrayList<Subtask> getSubtaskListByEpicId(Integer id);
 
-    ArrayList<Integer> updateSubtasksInEpic(Epic epic);
-
-    void updateEpicStatus(Integer id);
+    List<Task> getHistory();
 
 
 }

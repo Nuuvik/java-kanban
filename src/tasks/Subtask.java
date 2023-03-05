@@ -16,6 +16,11 @@ public class Subtask extends Task {
         this.epicId = epicId;
     }
 
+    @Override
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
     public int getEpicId() {
         return epicId;
     }
