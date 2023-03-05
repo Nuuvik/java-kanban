@@ -60,7 +60,5 @@ public interface TaskManager {
 
     void updateEpicStatus(Integer id);
 
-    // История просмотра задач
-    List<Task> getHistory();
 
 }

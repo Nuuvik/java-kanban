@@ -3,13 +3,13 @@ package managers;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
+
 import static tasks.Status.NEW;
 import static tasks.Status.IN_PROGRESS;
 import static tasks.Status.DONE;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -19,8 +19,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     private int generatedId = 1;  //генерация id
 
-    private final Integer maxSizeOfHistory = 10;
-    private final ArrayList<Task> historyList = new ArrayList<>();
+    InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
 
     // 2.1 Получение списка всех задач (tasks)
     @Override
@@ -55,36 +54,21 @@ public class InMemoryTaskManager implements TaskManager {
     //2.3 Получение по идентификатору (tasks)
     @Override
     public Task getTaskById(int id) {
-        if(historyList.size() < maxSizeOfHistory) {
-            historyList.add(tasks.get(id));
-        } else {
-            historyList.remove(0);
-            historyList.add(tasks.get(id));
-        }
+        historyManager.add(tasks.get(id));
         return tasks.get(id);
     }
 
     //2.3 Получение по идентификатору (epics)
     @Override
     public Epic getEpicById(int id) {
-        if(historyList.size() < maxSizeOfHistory) {
-            historyList.add(epics.get(id));
-        } else {
-            historyList.remove(0);
-            historyList.add(epics.get(id));
-        }
+        historyManager.add(epics.get(id));
         return epics.get(id);
     }
 
     //2.3 Получение по идентификатору (subtasks)
     @Override
     public Subtask getSubtaskById(int id) {
-        if(historyList.size() < maxSizeOfHistory) {
-            historyList.add(subtasks.get(id));
-        } else {
-            historyList.remove(0);
-            historyList.add(subtasks.get(id));
-        }
+        historyManager.add(subtasks.get(id));
         return subtasks.get(id);
     }
 
@@ -224,11 +208,6 @@ public class InMemoryTaskManager implements TaskManager {
         } catch (NullPointerException e) {
 
         }
-    }
-
-    @Override
-    public List<Task> getHistory() {
-        return historyList;
     }
 
 
