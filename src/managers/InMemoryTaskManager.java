@@ -105,7 +105,7 @@ public class InMemoryTaskManager implements TaskManager {
         subtask.setId(generatedId++);
         subtasks.put(subtask.getId(), subtask);
         ArrayList<Integer> newSubtaskList = updateSubtasksInEpic(epics.get(subtask.getEpicId()));
-       final Epic epic = epics.get(subtask.getEpicId());
+        final Epic epic = epics.get(subtask.getEpicId());
         newSubtaskList.add(subtask.getId());
         epic.setSubtaskIds(newSubtaskList);
         updateEpicStatus(subtask.getEpicId());
@@ -126,7 +126,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateSubtask(Subtask subtask) {
         subtasks.put(subtask.getId(), subtask);
-       final Epic epic = epics.get(subtask.getEpicId());
+        final Epic epic = epics.get(subtask.getEpicId());
         updateSubtasksInEpic(epic);
         updateEpicStatus(subtask.getEpicId());
     }
@@ -173,7 +173,6 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
 
-
     private ArrayList<Integer> updateSubtasksInEpic(Epic epic) {
         ArrayList<Integer> listOfSubtaskId = new ArrayList<>();
 
@@ -185,7 +184,6 @@ public class InMemoryTaskManager implements TaskManager {
 
         return epic.getSubtaskIds();
     }
-
 
 
     private void updateEpicStatus(Integer id) {
