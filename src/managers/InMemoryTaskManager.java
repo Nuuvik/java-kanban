@@ -60,7 +60,7 @@ public class InMemoryTaskManager implements TaskManager {
     //2.3 Получение по идентификатору (tasks)
     @Override
     public Task getTaskById(int id) {
-        Task receivedId = tasks.get(id);
+        final Task receivedId = tasks.get(id);
         historyManager.add(receivedId);
         return receivedId;
     }
@@ -68,7 +68,7 @@ public class InMemoryTaskManager implements TaskManager {
     //2.3 Получение по идентификатору (epics)
     @Override
     public Epic getEpicById(int id) {
-        Epic receivedId = epics.get(id);
+        final Epic receivedId = epics.get(id);
         historyManager.add(receivedId);
         return receivedId;
     }
@@ -76,7 +76,7 @@ public class InMemoryTaskManager implements TaskManager {
     //2.3 Получение по идентификатору (subtasks)
     @Override
     public Subtask getSubtaskById(int id) {
-        Subtask receivedId = subtasks.get(id);
+        final Subtask receivedId = subtasks.get(id);
         historyManager.add(receivedId);
         return receivedId;
     }
