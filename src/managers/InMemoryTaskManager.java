@@ -1,8 +1,6 @@
 package managers;
 
-import tasks.Epic;
-import tasks.Subtask;
-import tasks.Task;
+import tasks.*;
 
 import static tasks.Status.NEW;
 import static tasks.Status.IN_PROGRESS;
@@ -11,7 +9,7 @@ import static tasks.Status.DONE;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+
 
 public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks = new HashMap<>();
@@ -142,17 +140,19 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteTask(int id) {
         tasks.remove(id);
+        historyManager.remove(id); // удаление из истории
     }
 
     // 2.6 Удаление по идентификатору (epics)
     @Override
     public void deleteEpic(int id) {
-        for (Integer key : subtasks.keySet()) {
-            if (Objects.equals(subtasks.get(key).getEpicId(), id)) {
-                subtasks.remove(id);
-            }
+        final Epic epic = epics.get(id);
+        for (Integer subtaskId : epic.getSubtaskIds()) {
+            subtasks.remove(subtaskId);
+            historyManager.remove(subtaskId);
         }
         epics.remove(id);
+        historyManager.remove(id); // удаление из истории
     }
 
     // 2.6 Удаление по идентификатору (subtasks)
@@ -160,6 +160,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteSubtask(int id) {
         Subtask deletedId = subtasks.remove(id);
         updateEpicStatus(deletedId.getEpicId());
+        historyManager.remove(id); // удаление из истории
     }
 
     //3.1 Получение списка всех подзадач определённого эпика
