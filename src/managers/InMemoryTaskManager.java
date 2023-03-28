@@ -9,6 +9,7 @@ import static tasks.Status.DONE;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class InMemoryTaskManager implements TaskManager {
@@ -173,6 +174,45 @@ public class InMemoryTaskManager implements TaskManager {
         return currentList;
     }
 
+    //удаление всех tasks
+    @Override
+    public void deleteAllTasks() {
+        for (Integer task : tasks.keySet()) {
+            historyManager.remove(task);
+        }
+        tasks.clear();
+    }
+
+    //удаление всех epics
+    @Override
+    public void deleteAllEpics() {
+        for (Integer task : epics.keySet()) {
+            historyManager.remove(task);
+        }
+        epics.clear();
+        for (Integer task : subtasks.keySet()) {
+            historyManager.remove(task);
+        }
+        subtasks.clear();
+    }
+
+    //удаление всех subtasks
+    @Override
+    public void deleteAllSubtasks() {
+        for (Integer task : subtasks.keySet()) {
+            historyManager.remove(task);
+        }
+        subtasks.clear();
+        for (Epic epic : epics.values()) {
+            epic.getSubtaskIds().clear();
+        }
+        for (Integer epic : epics.keySet()) {
+            updateEpicStatus(epic);
+        }
+
+
+    }
+
 
     private ArrayList<Integer> updateSubtasksInEpic(Epic epic) {
         ArrayList<Integer> listOfSubtaskId = new ArrayList<>();
@@ -188,34 +228,32 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     private void updateEpicStatus(Integer id) {
-        try {
-            Integer countOfNew = 0;
-            Integer countOfDone = 0;
-            Integer countOfSubtask = epics.get(id).getSubtaskIds().size();
 
-            for (Integer subtaskID : epics.get(id).getSubtaskIds()) {
-                if (subtasks.get(subtaskID).getStatus() == NEW) {
-                    countOfNew++;
-                } else if (subtasks.get(subtaskID).getStatus() == DONE) {
-                    countOfDone++;
-                }
-            }
-            if (countOfNew.equals(countOfSubtask) || (countOfSubtask == 0)) {
-                Epic epic = epics.get(id);
-                epic.setStatus(NEW);
-                epics.put(id, epic);
-            } else if (countOfDone.equals(countOfSubtask)) {
-                Epic epic = epics.get(id);
-                epic.setStatus(DONE);
-                epics.put(id, epic);
-            } else {
-                Epic epic = epics.get(id);
-                epic.setStatus(IN_PROGRESS);
-                epics.put(id, epic);
-            }
-        } catch (NullPointerException e) {
+        Integer countOfNew = 0;
+        Integer countOfDone = 0;
+        Integer countOfSubtask = epics.get(id).getSubtaskIds().size();
 
+        for (Integer subtaskID : epics.get(id).getSubtaskIds()) {
+            if (subtasks.get(subtaskID).getStatus() == NEW) {
+                countOfNew++;
+            } else if (subtasks.get(subtaskID).getStatus() == DONE) {
+                countOfDone++;
+            }
         }
+        if (countOfNew.equals(countOfSubtask) || (countOfSubtask == 0)) {
+            Epic epic = epics.get(id);
+            epic.setStatus(NEW);
+            epics.put(id, epic);
+        } else if (countOfDone.equals(countOfSubtask)) {
+            Epic epic = epics.get(id);
+            epic.setStatus(DONE);
+            epics.put(id, epic);
+        } else {
+            Epic epic = epics.get(id);
+            epic.setStatus(IN_PROGRESS);
+            epics.put(id, epic);
+        }
+
     }
 
 

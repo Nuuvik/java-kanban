@@ -56,6 +56,15 @@ public interface TaskManager {
     //3.1 Получение списка всех подзадач определённого эпика
     ArrayList<Subtask> getSubtaskListByEpicId(Integer id);
 
+    //удаление всех tasks
+    void deleteAllTasks();
+
+    //удаление всех epics
+    void deleteAllEpics();
+
+    //удаление всех subtasks
+    void deleteAllSubtasks();
+
     List<Task> getHistory();
 
 
