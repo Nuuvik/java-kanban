@@ -1,10 +1,9 @@
-package managers;
+package main;
 
+import managers.*;
 import tasks.*;
 
-import static tasks.Status.NEW;
-import static tasks.Status.IN_PROGRESS;
-import static tasks.Status.DONE;
+import static tasks.Status.*;
 
 
 public class Main {
