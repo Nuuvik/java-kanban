@@ -9,16 +9,13 @@ import java.util.List;
 public class InMemoryHistoryManager implements HistoryManager {
 
 
-    private HashMap<Integer, Node<Task>> history;
+    private final HashMap<Integer, Node<Task>> history;
 
     private Node<Task> head;
     private Node<Task> tail;
 
     public InMemoryHistoryManager() {
-
-
         this.history = new HashMap<>();
-
     }
 
     public void linkLast(Task element) {
@@ -44,7 +41,9 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     public void removeNode(Node<Task> node) {
-        if (node != null) {
+        if (node == null) {
+            return;
+        }
             final Node<Task> next = node.next;
             final Node<Task> prev = node.prev;
             node.data = null;
@@ -62,7 +61,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             }
 
             history.remove(node);
-        }
+
     }
 
 
