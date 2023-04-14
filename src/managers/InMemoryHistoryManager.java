@@ -20,7 +20,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     public void linkLast(Task element) {
         final Node<Task> oldTail = tail;
-        final Node<Task> newNode = new Node<Task>(oldTail, element, null);
+        final Node<Task> newNode = new Node<>(oldTail, element, null);
         tail = newNode;
         history.put(element.getId(), newNode);
         if (oldTail == null)

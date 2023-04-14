@@ -1,17 +1,17 @@
 package tasks;
 
 public class Subtask extends Task {
-    protected int epicId;
-    protected Status status;
+    private Epic epic;
 
-    public Subtask(String title, String description, Status status, int epicId) {
+
+    public Subtask(String title, String description, Status status, Epic epic) {
         super(title, description, status);
-        this.epicId = epicId;
+        this.epic = epic;
     }
 
-    public Subtask(Integer id, String title, String description, Status status, int epicId) {
+    public Subtask(Integer id, String title, String description, Status status, Epic epic) {
         super(id, title, description, status);
-        this.epicId = epicId;
+        this.epic = epic;
     }
 
 
@@ -19,9 +19,12 @@ public class Subtask extends Task {
         this.status = status;
     }
 
-    public int getEpicId() {
-        return epicId;
+    public Epic getEpic() {
+        return epic;
     }
 
-
+    @Override
+    public String toStringFromFile() {
+        return String.format("%s,%s,%s,%s,%s,%s", id, taskType, title, status, description, epic.getId());
+    }
 }

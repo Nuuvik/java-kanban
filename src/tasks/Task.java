@@ -1,37 +1,42 @@
 package tasks;
 
 public class Task {
-    protected Integer taskId;
+    protected Integer id;
     protected String title;
     protected String description;
     protected Status status;
+    protected TaskType taskType;
 
     public Task(String title, String description) {
         this.title = title;
         this.description = description;
+        this.taskType = TaskType.TASK;
     }
 
-    public Task(Integer taskId, String title, String description) {
-        this.taskId = taskId;
+    public Task(Integer id, String title, String description) {
+        this.id = id;
         this.title = title;
         this.description = description;
+        this.taskType = TaskType.TASK;
     }
 
     public Task(String title, String description, Status status) {
         this.title = title;
         this.description = description;
         this.status = status;
+        this.taskType = TaskType.TASK;
     }
 
-    public Task(Integer taskId, String title, String description, Status status) {
+    public Task(Integer id, String title, String description, Status status) {
         this.title = title;
         this.description = description;
         this.status = status;
-        this.taskId = taskId;
+        this.id = id;
+        this.taskType = TaskType.TASK;
     }
 
-    public void setId(int taskId) {
-        this.taskId = taskId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setStatus(Status status) {
@@ -39,7 +44,7 @@ public class Task {
     }
 
     public int getId() {
-        return taskId;
+        return id;
     }
 
     public String getTitle() {
@@ -63,6 +68,10 @@ public class Task {
                 ", description='" + getDescription() + "'" +
                 ", status='" + getStatus() +
                 "'}";
+    }
+
+    public String toStringFromFile() {
+        return String.format("%s,%s,%s,%s,%s,%s", id, taskType, title, status, description, "");
     }
 }
 
