@@ -16,7 +16,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected HashMap<Integer, Epic> epics = new HashMap<>();
     protected HashMap<Integer, Subtask> subtasks = new HashMap<>();
 
-    private int generatedId = 1;  //генерация id
+    protected int generatedId = 1;  //генерация id
 
     protected HistoryManager historyManager = Managers.getDefaultHistory();
 
@@ -27,32 +27,20 @@ public class InMemoryTaskManager implements TaskManager {
 
     // 2.1 Получение списка всех задач (tasks)
     @Override
-    public ArrayList<Task> getListOfTasks() {
-        ArrayList<Task> list = new ArrayList<>();
-        for (Integer task : tasks.keySet()) {
-            list.add(tasks.get(task));
-        }
-        return list;
+    public List<Task> getListOfTasks() {
+        return new ArrayList<>(tasks.values());
     }
 
     // 2.1 Получение списка всех задач (epics)
     @Override
-    public ArrayList<Epic> getListOfEpics() {
-        ArrayList<Epic> list = new ArrayList<>();
-        for (Integer epic : epics.keySet()) {
-            list.add(epics.get(epic));
-        }
-        return list;
+    public List<Epic> getListOfEpics() {
+        return new ArrayList<>(epics.values());
     }
 
     // 2.1 Получение списка всех задач (subtasks)
     @Override
-    public ArrayList<Subtask> getListOfSubtasks() {
-        ArrayList<Subtask> list = new ArrayList<>();
-        for (Integer subtask : subtasks.keySet()) {
-            list.add(subtasks.get(subtask));
-        }
-        return list;
+    public List<Subtask> getListOfSubtasks() {
+        return new ArrayList<>(subtasks.values());
     }
 
     //2.3 Получение по идентификатору (tasks)
@@ -81,34 +69,29 @@ public class InMemoryTaskManager implements TaskManager {
 
     //2.4 Создание (tasks)
     @Override
-    public Integer createTask(Task task) {
+    public void createTask(Task task) {
         task.setId(generatedId++);
         tasks.put(task.getId(), task);
-        return generatedId - 1;
+
     }
 
     //2.4 Создание (epics)
     @Override
-    public Integer createEpic(Epic epic) {
+    public void createEpic(Epic epic) {
         epic.setId(generatedId++);
-        ArrayList<Integer> arrayList = updateSubtasksInEpic(epic);
-        epic.setSubtaskIds(arrayList);
+        updateEpicStatus(epic);
         epics.put(epic.getId(), epic);
-        return generatedId - 1;
+
     }
 
     //2.4 Создание (subtasks)
     @Override
-    public Integer createSubtask(Subtask subtask) {
+    public void createSubtask(Subtask subtask) {
         subtask.setId(generatedId++);
         subtasks.put(subtask.getId(), subtask);
-        ArrayList<Integer> newSubtaskList = updateSubtasksInEpic(epics.get(subtask.getEpic()));
-        final Epic epic = epics.get(subtask.getEpic());
-        newSubtaskList.add(subtask.getId());
-        epic.setSubtaskIds(newSubtaskList);
-        updateEpicStatus(subtask.getId());
-        epics.put(subtask.getId(), epic);
-        return generatedId - 1;
+        subtask.getEpic().getSubtaskIds().add(subtask.getId());
+        updateEpicStatus(subtask.getEpic());
+
 
     }
 
@@ -124,16 +107,15 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateSubtask(Subtask subtask) {
         subtasks.put(subtask.getId(), subtask);
-        final Epic epic = epics.get(subtask.getEpic());
-        updateSubtasksInEpic(epic);
-        updateEpicStatus(subtask.getId());
+
+        updateEpicStatus(subtask.getEpic());
     }
 
     //2.5 Обновление (epics)
     @Override
     public void updateEpic(Epic epic) {
         epics.put(epic.getId(), epic);
-        updateEpicStatus(epic.getId());
+        updateEpicStatus(epic);
     }
 
     // 2.6 Удаление по идентификатору (tasks)
@@ -158,9 +140,13 @@ public class InMemoryTaskManager implements TaskManager {
     // 2.6 Удаление по идентификатору (subtasks)
     @Override
     public void deleteSubtask(int id) {
-        Subtask deletedId = subtasks.remove(id);
-        updateEpicStatus(deletedId.getId());
-        historyManager.remove(id); // удаление из истории
+        if (subtasks.containsKey(id)) {
+            final Epic epic = subtasks.get(id).getEpic();
+            epic.getSubtaskIds().remove((Integer) id);
+            updateEpicStatus(epic);
+            subtasks.remove(id);
+            historyManager.remove(id); // удаление из истории
+        }
     }
 
     //3.1 Получение списка всех подзадач определённого эпика
@@ -204,8 +190,6 @@ public class InMemoryTaskManager implements TaskManager {
         subtasks.clear();
         for (Epic epic : epics.values()) {
             epic.getSubtaskIds().clear();
-        }
-        for (Integer epic : epics.keySet()) {
             updateEpicStatus(epic);
         }
 
@@ -213,44 +197,29 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
 
-    private ArrayList<Integer> updateSubtasksInEpic(Epic epic) {
-        ArrayList<Integer> listOfSubtaskId = new ArrayList<>();
-
-        for (Integer subtaskId : epic.getSubtaskIds()) {
-            Subtask subtask = subtasks.get(subtaskId);
-            listOfSubtaskId.add(subtask.getId());
-        }
-        epic.setSubtaskIds(listOfSubtaskId);
-
-        return epic.getSubtaskIds();
-    }
-
-
-    private void updateEpicStatus(Integer id) {
+    private void updateEpicStatus(Epic epic) {
 
         Integer countOfNew = 0;
         Integer countOfDone = 0;
-        Integer countOfSubtask = epics.get(id).getSubtaskIds().size();
+        Integer countOfSubtask = epic.getSubtaskIds().size();
 
-        for (Integer subtaskID : epics.get(id).getSubtaskIds()) {
+        for (Integer subtaskID : epic.getSubtaskIds()) {
+
             if (subtasks.get(subtaskID).getStatus() == NEW) {
                 countOfNew++;
             } else if (subtasks.get(subtaskID).getStatus() == DONE) {
                 countOfDone++;
             }
+
         }
         if (countOfNew.equals(countOfSubtask) || (countOfSubtask == 0)) {
-            Epic epic = epics.get(id);
             epic.setStatus(NEW);
-            epics.put(id, epic);
         } else if (countOfDone.equals(countOfSubtask)) {
-            Epic epic = epics.get(id);
             epic.setStatus(DONE);
-            epics.put(id, epic);
         } else {
-            Epic epic = epics.get(id);
+
             epic.setStatus(IN_PROGRESS);
-            epics.put(id, epic);
+
         }
 
     }

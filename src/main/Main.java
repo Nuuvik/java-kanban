@@ -3,6 +3,7 @@ package main;
 import managers.*;
 import tasks.*;
 
+
 import static tasks.Status.*;
 
 
@@ -14,26 +15,25 @@ public class Main {
         TaskManager taskManager = Managers.getDefault();
 
 
-        Integer simpleTask1 = taskManager.createTask(new Task("Первый обычный таск", "", NEW));
-        Integer simpleTask2 = taskManager.createTask(new Task("Второй обычный таск", "", NEW));
+        taskManager.createTask(new Task("Task 1", "qwe", DONE));
+        taskManager.createTask(new Task("Task 2", "wwe", NEW));
+        taskManager.createTask(new Task("Task 3", "www", IN_PROGRESS));
+        taskManager.createTask(new Task("Task 4", "qqq", DONE));
 
 
-        Integer epic1 = taskManager.createEpic(new Epic("Мой первый эпик", ""));
-        Integer subtask1 = taskManager.createSubtask(new Subtask("Первый сабтаск первого эпика", "",
-                NEW, epic1));
-        Integer subtask2 = taskManager.createSubtask(new Subtask("Второй сабтаск первого эпика", "", NEW,
-                epic1));
-        Integer subtask3 = taskManager.createSubtask(new Subtask("Третий сабтаск первого эпика", "", NEW,
-                epic1));
+        Epic epic1 = new Epic("Epic 1", "rty");
+        taskManager.createEpic(epic1);
+        taskManager.createSubtask(new Subtask("Sub 1.1", "sds", IN_PROGRESS, epic1));
+        taskManager.createSubtask(new Subtask("Sub 1.2", "sdddds", NEW, epic1));
 
-        Integer epic2 = taskManager.createEpic(new Epic("Второй эпик", ""));
+        taskManager.createEpic(new Epic("Epic 2", "tyty"));
 
 
         taskManager.getTaskById(2);
         System.out.println("Печатаем историю поиска");
         System.out.println("Истоия" + taskManager.getHistory());
 
-        taskManager.getEpicById(3);
+        taskManager.getEpicById(5);
         System.out.println("Печатаем историю поиска");
         System.out.println("Истоия" + taskManager.getHistory());
 
@@ -41,7 +41,7 @@ public class Main {
         System.out.println("Печатаем историю поиска");
         System.out.println("Истоия" + taskManager.getHistory());
 
-        taskManager.getSubtaskById(4);
+        taskManager.getSubtaskById(6);
         System.out.println("Печатаем историю поиска");
         System.out.println("Истоия" + taskManager.getHistory());
 
@@ -49,7 +49,11 @@ public class Main {
         System.out.println("Печатаем историю поиска");
         System.out.println("Истоия" + taskManager.getHistory());
 
-        taskManager.getSubtaskById(6);
+        taskManager.getSubtaskById(7);
+        System.out.println("Печатаем историю поиска");
+        System.out.println("Истоия" + taskManager.getHistory());
+
+        taskManager.getTaskById(4);
         System.out.println("Печатаем историю поиска");
         System.out.println("Истоия" + taskManager.getHistory());
 
@@ -57,10 +61,11 @@ public class Main {
         System.out.println("Печатаем историю поиска");
         System.out.println("Истоия" + taskManager.getHistory());
 
-
-        taskManager.deleteEpic(3);
+        taskManager.deleteSubtask(6);
         System.out.println("Печатаем историю поиска");
         System.out.println("Истоия" + taskManager.getHistory());
+
+        System.out.println(taskManager.getEpicById(5));
 
 
     }

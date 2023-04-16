@@ -35,6 +35,14 @@ public class Task {
         this.taskType = TaskType.TASK;
     }
 
+    public Task(String value) { // по ТЗ 6
+        String[] task = value.split(",");
+        this.id = Integer.parseInt(task[0]);
+        this.title = task[2];
+        this.status = Status.valueOf(task[3]);
+        this.description = task[4];
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -59,19 +67,15 @@ public class Task {
         return status;
     }
 
+    public TaskType getTaskType() {
+        return taskType;
+    }
+
     @Override
     public String toString() {
-        return "tasks.Task{" +
-
-                " id=" + getId() +
-                ", title='" + getTitle() + '\'' +
-                ", description='" + getDescription() + "'" +
-                ", status='" + getStatus() +
-                "'}";
+        return id + ",TASK," + title + "," + status + "," + description;
     }
 
-    public String toStringFromFile() {
-        return String.format("%s,%s,%s,%s,%s,%s", id, taskType, title, status, description, "");
-    }
+
 }
 

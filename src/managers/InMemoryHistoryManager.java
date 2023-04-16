@@ -44,23 +44,23 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (node == null) {
             return;
         }
-            final Node<Task> next = node.next;
-            final Node<Task> prev = node.prev;
-            node.data = null;
+        final Node<Task> next = node.next;
+        final Node<Task> prev = node.prev;
+        node.data = null;
 
-            if (prev != null) {
-                prev.next = next;
-            } else {
-                head = next;
-            }
+        if (prev != null) {
+            prev.next = next;
+        } else {
+            head = next;
+        }
 
-            if (next != null) {
-                next.prev = prev;
-            } else {
-                tail = prev;
-            }
+        if (next != null) {
+            next.prev = prev;
+        } else {
+            tail = prev;
+        }
 
-            history.remove(node);
+        history.remove(node);
 
     }
 

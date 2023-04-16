@@ -9,13 +9,13 @@ import java.util.List;
 
 public interface TaskManager {
     // 2.1 Получение списка всех задач (tasks)
-    ArrayList<Task> getListOfTasks();
+    List<Task> getListOfTasks();
 
     // 2.1 Получение списка всех задач (epics)
-    ArrayList<Epic> getListOfEpics();
+    List<Epic> getListOfEpics();
 
     // 2.1 Получение списка всех задач (subtasks)
-    ArrayList<Subtask> getListOfSubtasks();
+    List<Subtask> getListOfSubtasks();
 
     //2.3 Получение по идентификатору (tasks)
     Task getTaskById(int id);
@@ -27,13 +27,13 @@ public interface TaskManager {
     Subtask getSubtaskById(int id);
 
     //2.4 Создание (tasks)
-    Integer createTask(Task task);
+    void createTask(Task task);
 
     //2.4 Создание (epics)
-    Integer createEpic(Epic epic);
+    void createEpic(Epic epic);
 
     //2.4 Создание (subtasks)
-    Integer createSubtask(Subtask subtask);
+    void createSubtask(Subtask subtask);
 
     //2.5 Обновление (tasks)
     void updateTask(Task task);
