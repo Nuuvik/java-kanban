@@ -53,7 +53,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         fileBackedTasksManager.createSubtask(subtask2);
         fileBackedTasksManager.createSubtask(subtask3);
 
-        System.out.println(subtask2);
 
         fileBackedTasksManager.getTaskById(4);
         System.out.println();
@@ -86,29 +85,19 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public static FileBackedTasksManager loadFromFile(File file) {
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager();
-        int maxId = 0;
-        int taskId = 0;
+
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
             while (bufferedReader.ready()) {
                 String taskLine = bufferedReader.readLine();
                 if (!taskLine.isEmpty()) {
                     tasksFromString(taskLine, fileBackedTasksManager);
-                    String[] taskFields = taskLine.split(",");
-
-                    try {
-                        taskId = Integer.parseInt(taskFields[0]);
-                    } catch (NumberFormatException ignored) {
-
-                    }
-                    if (taskId > maxId) {
-                        maxId = taskId;
-                    }
+                    
                 } else {
                     String historyLine = bufferedReader.readLine();
                     historyFromString(historyLine, fileBackedTasksManager);
                 }
             }
-            InMemoryTaskManager.generatedId = maxId + 1;
+
         } catch (IOException e) {
             throw new ManagerSaveException("Не удалось загрузить из файла");
         }
@@ -118,6 +107,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private static void tasksFromString(String taskLine, FileBackedTasksManager fileBackedTasksManager) {
         String[] taskFields = taskLine.split(",");
+        int maxId = 0;
+        int taskId = 0;
         if (taskFields[1].equals(String.valueOf(TaskType.TASK))) {
             Task task = new Task(taskLine);
             fileBackedTasksManager.addTaskFromFile(task);
@@ -130,15 +121,29 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             Subtask subtask = new Subtask(taskLine);
             fileBackedTasksManager.addSubtaskFromFile(subtask);
         }
+
+        try {
+            taskId = Integer.parseInt(taskFields[0]);
+        } catch (NumberFormatException ignored) {
+
+        }
+        if (taskId > maxId) {
+            maxId = taskId;
+        }
+        InMemoryTaskManager.generatedId = maxId + 1;
     }
 
     private static void historyFromString(String historyLine, FileBackedTasksManager fileBackedTasksManager) {
         String[] historyFields = historyLine.split(",");
         for (String field : historyFields) {
             int id = Integer.parseInt(field);
-            fileBackedTasksManager.tasks.get(id);
-            fileBackedTasksManager.epics.get(id);
-            fileBackedTasksManager.subtasks.get(id);
+            Task task = fileBackedTasksManager.tasks.get(id);
+            fileBackedTasksManager.historyManager.add(task);
+            Epic epic = fileBackedTasksManager.epics.get(id);
+            fileBackedTasksManager.historyManager.add(epic);
+            Subtask subtask = fileBackedTasksManager.subtasks.get(id);
+            fileBackedTasksManager.historyManager.add(subtask);
+
         }
     }
 
