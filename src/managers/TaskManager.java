@@ -8,62 +8,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface TaskManager {
-    // 2.1 Получение списка всех задач (tasks)
-    List<Task> getListOfTasks();
+    List<Task> getAllTasks();
 
-    // 2.1 Получение списка всех задач (epics)
-    List<Epic> getListOfEpics();
+    List<Epic> getAllEpics();
 
-    // 2.1 Получение списка всех задач (subtasks)
-    List<Subtask> getListOfSubtasks();
+    List<Subtask> getAllSubtasks();
 
-    //2.3 Получение по идентификатору (tasks)
-    Task getTaskById(int id);
+    Task getTask(Integer id);
 
-    //2.3 Получение по идентификатору (epics)
-    Epic getEpicById(int id);
+    Epic getEpic(Integer id);
 
-    //2.3 Получение по идентификатору (subtasks)
-    Subtask getSubtaskById(int id);
+    Task getSubtask(Integer id);
 
-    //2.4 Создание (tasks)
-    void createTask(Task task);
+    Task createTask(Task task);
 
-    //2.4 Создание (epics)
-    void createEpic(Epic epic);
+    Epic createEpic(Epic epic);
 
-    //2.4 Создание (subtasks)
-    void createSubtask(Subtask subtask);
+    Subtask createSubtask(Subtask subtask);
 
-    //2.5 Обновление (tasks)
     void updateTask(Task task);
 
-    //2.5 Обновление (subtasks)
-    void updateSubtask(Subtask subtask);
-
-    //2.5 Обновление (epics)
     void updateEpic(Epic epic);
 
-    // 2.6 Удаление по идентификатору (tasks)
-    void deleteTask(int id);
+    void updateSubtask(Subtask subtask);
 
-    // 2.6 Удаление по идентификатору (epics)
-    void deleteEpic(int id);
+    void removeTask(int id);
 
-    // 2.6 Удаление по идентификатору (subtasks)
-    void deleteSubtask(int id);
+    void removeEpic(int epicId);
 
-    //3.1 Получение списка всех подзадач определённого эпика
-    ArrayList<Subtask> getSubtaskListByEpicId(Integer id);
+    void removeSubtask(int subtaskId);
 
-    //удаление всех tasks
-    void deleteAllTasks();
+    void removeAllTasks();
 
-    //удаление всех epics
-    void deleteAllEpics();
-
-    //удаление всех subtasks
-    void deleteAllSubtasks();
+    List<Subtask> getSubtasksByEpicId(int epicId);
 
     List<Task> getHistory();
 

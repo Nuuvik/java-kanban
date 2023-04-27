@@ -74,7 +74,14 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public void remove(Integer id) {
+    public void clear() {
+        history.clear();
+        head = null;
+        tail = null;
+    }
+
+    @Override
+    public void remove(int id) {
         removeNode(history.get(id));
     }
 
@@ -100,4 +107,3 @@ class Node<Task> { // отдельный класс Node для узла спи�
     }
 
 }
-

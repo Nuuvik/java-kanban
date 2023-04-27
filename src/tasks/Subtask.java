@@ -1,41 +1,19 @@
 package tasks;
 
+import java.time.Instant;
+import java.util.Objects;
+
 public class Subtask extends Task {
-    private Epic epic;
-    private Integer epicId;
+    private final Integer epicId;
 
-
-    public Subtask(Integer id, String title, String description, Status status, Epic epic) {
-        super(id, title, description, status);
-        this.epic = epic;
-        this.taskType = TaskType.SUBTASK;
-    }
-
-
-    public Subtask(String title, String description, Status status, Epic epic) {
-        super(title, description, status);
-        this.epic = epic;
-        this.taskType = TaskType.SUBTASK;
-    }
-
-    public Subtask(String title, String description, Status status, Integer epicId) {
-        super(title, description, status);
+    public Subtask(String title, String description, Integer epicId, Instant startTime, long duration) {
+        super(title, description, startTime, duration);
         this.epicId = epicId;
     }
 
-    public Subtask(String value) { // по ТЗ 6
-        super(value);
-        String[] subTask = value.split(",");
-        this.epicId = Integer.parseInt(subTask[5]);
-
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public Epic getEpic() {
-        return epic;
+    public Subtask(Integer id, Status status, String title, String description, Integer epicId, Instant startTime, long duration) {
+        super(id, status, title, description, startTime, duration);
+        this.epicId = epicId;
     }
 
     public Integer getEpicId() {
@@ -43,7 +21,28 @@ public class Subtask extends Task {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Subtask subtask = (Subtask) o;
+        return Objects.equals(epicId, subtask.epicId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), epicId);
+    }
+
+    @Override
     public String toString() {
-        return id + ",SUBTASK," + title + "," + status + "," + description + "," + epicId;
+        return id + "," +
+                TaskType.SUBTASK + "," +
+                title + "," +
+                status + "," +
+                description + "," +
+                startTime.toEpochMilli() + "," +
+                duration + "," +
+                epicId;
     }
 }

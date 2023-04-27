@@ -1,81 +1,95 @@
 package tasks;
 
+import java.time.Instant;
+import java.util.Objects;
+
 public class Task {
     protected Integer id;
+    protected Status status = Status.NEW;
     protected String title;
     protected String description;
-    protected Status status;
-    protected TaskType taskType;
+    protected Instant startTime;
+    protected long duration;
 
-    public Task(String title, String description) {
+    public Task(String title, String description, Instant startTime, long duration) {
         this.title = title;
         this.description = description;
-        this.taskType = TaskType.TASK;
+        this.startTime = startTime;
+        this.duration = duration;
     }
 
-    public Task(Integer id, String title, String description) {
+    public Task(Integer id, Status status, String title, String description, Instant startTime, long duration) {
         this.id = id;
-        this.title = title;
-        this.description = description;
-        this.taskType = TaskType.TASK;
-    }
-
-    public Task(String title, String description, Status status) {
-        this.title = title;
-        this.description = description;
         this.status = status;
-        this.taskType = TaskType.TASK;
-    }
-
-    public Task(Integer id, String title, String description, Status status) {
         this.title = title;
         this.description = description;
-        this.status = status;
-        this.id = id;
-        this.taskType = TaskType.TASK;
+        this.startTime = startTime;
+        this.duration = duration;
     }
 
-    public Task(String value) { // по ТЗ 6
-        String[] task = value.split(",");
-        this.id = Integer.parseInt(task[0]);
-        this.title = task[2];
-        this.status = Status.valueOf(task[3]);
-        this.description = task[4];
+    public Integer getId() {
+        return id;
     }
 
     public void setId(Integer id) {
         this.id = id;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public int getId() {
-        return id;
-    }
-
     public String getTitle() {
         return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getDescription() {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public Status getStatus() {
         return status;
     }
 
-    public TaskType getTaskType() {
-        return taskType;
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public Instant getStartTime() {
+        return startTime;
+    }
+
+    public Instant getEndTime() {
+        long SECONDS_IN_MINUTE = 60L;
+        return startTime.plusSeconds(duration * SECONDS_IN_MINUTE);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return Objects.equals(id, task.id) && Objects.equals(title, task.title) && Objects.equals(description,
+                task.description) && status == task.status;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, description, status);
     }
 
     @Override
     public String toString() {
-        return id + ",TASK," + title + "," + status + "," + description;
+        return id + "," +
+                TaskType.TASK + "," +
+                title + "," +
+                status + "," +
+                description + "," +
+                startTime.toEpochMilli() + "," +
+                duration;
     }
-
-
 }
-
