@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-class FileBackedTaskManagerTest extends TaskManagerTest {
+class FileBackedTasksManagerTest extends TaskManagerTest {
     private final Path path = Path.of("data/data.csv");
 
     @BeforeEach
