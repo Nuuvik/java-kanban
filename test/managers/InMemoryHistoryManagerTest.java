@@ -1,19 +1,15 @@
-package tests;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+package managers;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import tasks.Status;
 import tasks.Task;
-import managers.FileBackedTasksManager;
-import managers.HistoryManager;
-import managers.InMemoryHistoryManager;
 
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class InMemoryHistoryManagerTest {

@@ -1,17 +1,12 @@
-package tests;
+package managers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
+import exceptions.ManagerSaveException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
-import exceptions.ManagerSaveException;
-import managers.FileBackedTasksManager;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,9 +14,12 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 
 class FileBackedTasksManagerTest extends TaskManagerTest {
-    private final Path path = Path.of("data/data.csv");
+    private final Path path = Path.of("data.csv");
 
     @BeforeEach
     public void beforeEach() {

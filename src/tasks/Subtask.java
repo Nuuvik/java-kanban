@@ -4,7 +4,7 @@ import java.time.Instant;
 import java.util.Objects;
 
 public class Subtask extends Task {
-    private final Integer epicId;
+    private Integer epicId;
 
     public Subtask(String title, String description, Integer epicId, Instant startTime, long duration) {
         super(title, description, startTime, duration);
@@ -18,6 +18,11 @@ public class Subtask extends Task {
 
     public Integer getEpicId() {
         return epicId;
+    }
+
+
+    public void setEpicId(Integer epicId) {
+        this.epicId = epicId;
     }
 
     @Override

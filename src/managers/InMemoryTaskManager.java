@@ -1,7 +1,9 @@
 package managers;
 
 import exceptions.TaskOverlapAnotherTaskException;
-import tasks.*;
+import tasks.Epic;
+import tasks.Subtask;
+import tasks.Task;
 
 import java.util.*;
 
@@ -79,7 +81,7 @@ public class InMemoryTaskManager implements TaskManager {
         addNewPrioritizedTask(subtask);
         subtasks.put(subtask.getId(), subtask);
         epic.addSubtask(subtask);
-        epic.updateEpicStatus(subtasks);
+        epic.updateEpic(subtasks);
 
         return subtask;
     }
@@ -93,6 +95,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateEpic(Epic epic) {
         epics.put(epic.getId(), epic);
+        Epic oldEpic = epics.get(epic.getId());
+        epic.setSubtasks(oldEpic.getSubtasks());
+
     }
 
     @Override
@@ -100,7 +105,7 @@ public class InMemoryTaskManager implements TaskManager {
         addNewPrioritizedTask(subtask);
         subtasks.put(subtask.getId(), subtask);
         Epic epic = epics.get(subtask.getEpicId());
-        epic.updateEpicStatus(subtasks);
+        epic.updateEpic(subtasks);
     }
 
     @Override
@@ -137,17 +142,42 @@ public class InMemoryTaskManager implements TaskManager {
         epic.removeSubtask(subtask);
         prioritizedTasks.remove(subtask);
         subtasks.remove(subtaskId);
-        epic.updateEpicStatus(subtasks);
+        epic.updateEpic(subtasks);
         history.remove(subtaskId);
     }
 
     @Override
     public void removeAllTasks() {
+        for (Map.Entry<Integer, Task> removedTask : tasks.entrySet()) {
+            prioritizedTasks.remove(removedTask.getValue());
+            history.remove(removedTask.getKey());
+        }
         tasks.clear();
+    }
+
+
+    @Override
+    public void removeAllEpics() {
+        for (Map.Entry<Integer, Epic> removedEpic : epics.entrySet()) {
+            prioritizedTasks.remove(removedEpic.getValue());
+            history.remove(removedEpic.getKey());
+        }
+        for (Map.Entry<Integer, Subtask> removedSubtask : subtasks.entrySet()) {
+            prioritizedTasks.remove(removedSubtask.getValue());
+            history.remove(removedSubtask.getKey());
+        }
         epics.clear();
         subtasks.clear();
-        history.clear();
-        prioritizedTasks.clear();
+    }
+
+
+    @Override
+    public void removeAllSubtasks() {
+        for (Map.Entry<Integer, Subtask> removedSubtask : subtasks.entrySet()) {
+            prioritizedTasks.remove(removedSubtask.getValue());
+            history.remove(removedSubtask.getKey());
+        }
+        subtasks.clear();
     }
 
     @Override
@@ -168,27 +198,25 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private void addNewPrioritizedTask(Task task) {
+        validateTaskPriority(task);
         prioritizedTasks.add(task);
-        validateTaskPriority();
     }
 
-    private void validateTaskPriority() {
+    private void validateTaskPriority(Task newTask) {
         List<Task> tasks = getPrioritizedTasks();
 
-        for (int i = 1; i < tasks.size(); i++) {
-            Task task = tasks.get(i);
-
-            boolean taskHasIntersections = task.getStartTime().isBefore(tasks.get(i - 1).getEndTime());
+        for (Task task : tasks) {
+            boolean taskHasIntersections = newTask.getStartTime().isBefore(task.getEndTime()) &&
+                    newTask.getEndTime().isAfter(task.getStartTime());
 
             if (taskHasIntersections) {
-                throw new TaskOverlapAnotherTaskException("Задачи #" + task.getId() + " и #" + tasks.get(i - 1) + "пересекаются");
+                throw new TaskOverlapAnotherTaskException("Задача #" + newTask.getId() + " пересекается с задачей #" + task.getId());
             }
         }
     }
 
     public List<Task> getPrioritizedTasks() {
-        List<Task> prioritizedTasksList = new ArrayList<>(prioritizedTasks);
-        return prioritizedTasksList;
+        return new ArrayList<>(prioritizedTasks);
     }
 
     private int getNextId() {

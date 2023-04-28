@@ -1,8 +1,6 @@
-package tests;
+package managers;
 
 import exceptions.TaskOverlapAnotherTaskException;
-import managers.FileBackedTasksManager;
-import managers.TaskManager;
 import org.junit.jupiter.api.Test;
 import tasks.Epic;
 import tasks.Status;
@@ -67,24 +65,73 @@ public abstract class TaskManagerTest {
         assertEquals(List.of(subtask.getId()), epic.getSubtasks());
     }
 
+
     @Test
-    public void shouldUpdateTaskStatus() {
+    public void shouldNotCreateSubtaskWithInvalidEpicId() {
+        assertThrows(NullPointerException.class, () -> {
+            Epic epic = manager.createEpic(createEpic());
+            Subtask subtask = createSubtask(epic);
+            subtask.setEpicId(333);
+            manager.createSubtask(subtask);
+        });
+    }
+
+
+    @Test
+    public void shouldUpdateTask() {
         Task task = manager.createTask(createTask());
+        Task updatedTask = new Task(1, Status.IN_PROGRESS, "Updated Task", "Updated Task desc", Instant.ofEpochMilli(-386310686000L), 30);
+        manager.updateTask(updatedTask);
+        Task retrievedTask = manager.getTask(task.getId());
+        assertEquals("Updated Task", retrievedTask.getTitle());
+        assertEquals("Updated Task desc", retrievedTask.getDescription());
+        assertEquals(Instant.ofEpochMilli(-386310686000L), retrievedTask.getStartTime());
+        assertEquals(Status.IN_PROGRESS, retrievedTask.getStatus());
+        assertEquals(30, retrievedTask.getDuration());
 
-        task.setStatus(Status.IN_PROGRESS);
-        manager.updateTask(task);
-
-        assertEquals(Status.IN_PROGRESS, manager.getTask(task.getId()).getStatus());
     }
 
     @Test
-    public void shouldUpdateEpicTitle() {
+    public void shouldNotUpdateTaskWithInvalidId() {
+        Task task = manager.createTask(createTask());
+        Task updatedTask = new Task(999, Status.IN_PROGRESS, "Updated Task", "Updated Task desc", Instant.ofEpochMilli(-386310686000L), 30);
+        manager.updateTask(updatedTask);
+        Task retrievedTask = manager.getTask(task.getId());
+        assertNotEquals("Updated Task", retrievedTask.getTitle());
+        assertNotEquals("Updated Task desc", retrievedTask.getDescription());
+        assertNotEquals(Instant.ofEpochMilli(-386310686000L), retrievedTask.getStartTime());
+        assertNotEquals(Status.IN_PROGRESS, retrievedTask.getStatus());
+        assertNotEquals(30, retrievedTask.getDuration());
+
+    }
+
+    @Test
+    public void shouldUpdateEpic() {
         Epic epic = manager.createEpic(createEpic());
+        Epic updatedEpic = new Epic(1, Status.IN_PROGRESS, "Updated Epic", "Updated Epic desc", Instant.ofEpochMilli(-386310666000L), 30);
+        manager.updateEpic(updatedEpic);
+        Epic retrievedEpic = manager.getEpic(epic.getId());
+        assertEquals("Updated Epic", retrievedEpic.getTitle());
+        assertEquals("Updated Epic desc", retrievedEpic.getDescription());
+        assertEquals(Instant.ofEpochMilli(-386310666000L), retrievedEpic.getStartTime());
+        assertEquals(Status.IN_PROGRESS, retrievedEpic.getStatus());
+        assertEquals(30, retrievedEpic.getDuration());
+    }
 
-        epic.setTitle("New title");
-        manager.updateEpic(epic);
+    @Test
+    public void shouldNotUpdateEpicWithInvalidId() {
+        Epic epic = manager.createEpic(createEpic());
+        Epic updatedEpic = new Epic(999, Status.IN_PROGRESS, "Updated Epic", "Updated Epic desc",
+                Instant.ofEpochMilli(-386310676000L), 30);
+        epic.setSubtasks(updatedEpic.getSubtasks());
+        manager.updateEpic(updatedEpic);
+        Epic retrievedEpic = manager.getEpic(epic.getId());
+        assertNotEquals("Updated Epic", retrievedEpic.getTitle());
+        assertNotEquals("Updated Epic desc", retrievedEpic.getDescription());
+        assertNotEquals(Instant.ofEpochMilli(-386310676000L), retrievedEpic.getStartTime());
+        assertNotEquals(Status.IN_PROGRESS, retrievedEpic.getStatus());
+        assertNotEquals(30, retrievedEpic.getDuration());
 
-        assertEquals("New title", manager.getEpic(epic.getId()).getTitle());
     }
 
     @Test
@@ -132,6 +179,9 @@ public abstract class TaskManagerTest {
         manager.createSubtask(createSubtask(epic));
 
         manager.removeAllTasks();
+        manager.removeAllEpics();
+        manager.removeAllSubtasks();
+
 
         assertEquals(Collections.EMPTY_LIST, manager.getAllTasks());
         assertEquals(Collections.EMPTY_LIST, manager.getAllEpics());

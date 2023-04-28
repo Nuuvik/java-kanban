@@ -26,6 +26,11 @@ public class Epic extends Task {
         return subtasks;
     }
 
+    public void setSubtasks(List<Integer> subtasks) {
+        this.subtasks.clear();
+        this.subtasks.addAll(subtasks);
+    }
+
     public void addSubtask(Subtask subtask) {
         subtasks.add(subtask.getId());
     }
@@ -34,7 +39,7 @@ public class Epic extends Task {
         subtasks.remove(subtask.getId());
     }
 
-    public void updateEpicStatus(Map<Integer, Subtask> allSubtasks) {
+    public void updateEpic(Map<Integer, Subtask> allSubtasks) {
         if (getSubtasks().isEmpty()) {
             this.status = Status.NEW;
             return;
@@ -42,6 +47,7 @@ public class Epic extends Task {
 
         int newCount = 0;
         int doneCount = 0;
+        long totalDuration = 0; //для расчета продолжительности всех сабтасков в эпике
         Instant startTime = allSubtasks.get(subtasks.get(0)).getStartTime();
         Instant endTime = allSubtasks.get(subtasks.get(0)).getEndTime();
 
@@ -51,11 +57,12 @@ public class Epic extends Task {
             if (subtask.getStatus() == Status.DONE) doneCount += 1;
             if (subtask.getStartTime().isBefore(startTime)) startTime = subtask.getStartTime();
             if (subtask.getEndTime().isAfter(endTime)) endTime = subtask.getEndTime();
+            totalDuration += Duration.between(subtask.getStartTime(), subtask.getEndTime()).toMinutes(); //расчет
         }
 
         this.startTime = startTime;
         this.endTime = endTime;
-        this.duration = Duration.between(startTime, endTime).toMinutes();
+        this.duration = totalDuration;
 
         if (getSubtasks().size() == newCount) {
             this.status = Status.NEW;
@@ -91,12 +98,6 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return id + "," +
-                TaskType.EPIC + "," +
-                title + "," +
-                status + "," +
-                description + "," +
-                startTime.toEpochMilli() + "," +
-                duration;
+        return id + "," + TaskType.EPIC + "," + title + "," + status + "," + description + "," + startTime.toEpochMilli() + "," + duration;
     }
 }

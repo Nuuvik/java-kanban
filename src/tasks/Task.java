@@ -18,7 +18,7 @@ public class Task {
         this.duration = duration;
     }
 
-    public Task(Integer id, Status status, String title, String description, Instant startTime, long duration) {
+    public Task(int id, Status status, String title, String description, Instant startTime, long duration) {
         this.id = id;
         this.status = status;
         this.title = title;
@@ -66,6 +66,10 @@ public class Task {
     public Instant getEndTime() {
         long SECONDS_IN_MINUTE = 60L;
         return startTime.plusSeconds(duration * SECONDS_IN_MINUTE);
+    }
+
+    public long getDuration() {
+        return duration;
     }
 
     @Override
