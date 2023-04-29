@@ -39,8 +39,8 @@ public class Epic extends Task {
         subtasks.remove(subtask.getId());
     }
 
-    public void updateEpic(Map<Integer, Subtask> allSubtasks) {
-        if (getSubtasks().isEmpty()) {
+    public void updateEpicStatusAndTiming(Map<Integer, Subtask> allSubtasks) { //при добавлении новых параметров
+        if (getSubtasks().isEmpty()) {                                         //измени название метода
             this.status = Status.NEW;
             return;
         }

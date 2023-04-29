@@ -81,7 +81,7 @@ public class InMemoryTaskManager implements TaskManager {
         addNewPrioritizedTask(subtask);
         subtasks.put(subtask.getId(), subtask);
         epic.addSubtask(subtask);
-        epic.updateEpic(subtasks);
+        epic.updateEpicStatusAndTiming(subtasks);
 
         return subtask;
     }
@@ -105,12 +105,12 @@ public class InMemoryTaskManager implements TaskManager {
         addNewPrioritizedTask(subtask);
         subtasks.put(subtask.getId(), subtask);
         Epic epic = epics.get(subtask.getEpicId());
-        epic.updateEpic(subtasks);
+        epic.updateEpicStatusAndTiming(subtasks);
     }
 
     @Override
     public void removeTask(int taskId) {
-        prioritizedTasks.removeIf(task -> task.getId() == taskId);
+        prioritizedTasks.removeIf(task -> task.getId().equals(taskId));
         tasks.remove(taskId);
         history.remove(taskId);
     }
@@ -142,7 +142,7 @@ public class InMemoryTaskManager implements TaskManager {
         epic.removeSubtask(subtask);
         prioritizedTasks.remove(subtask);
         subtasks.remove(subtaskId);
-        epic.updateEpic(subtasks);
+        epic.updateEpicStatusAndTiming(subtasks);
         history.remove(subtaskId);
     }
 
@@ -178,6 +178,11 @@ public class InMemoryTaskManager implements TaskManager {
             history.remove(removedSubtask.getKey());
         }
         subtasks.clear();
+
+        for (Epic epic : epics.values()) {
+            epic.getSubtasks().clear();
+            epic.updateEpicStatusAndTiming(subtasks);
+        }
     }
 
     @Override
@@ -210,7 +215,8 @@ public class InMemoryTaskManager implements TaskManager {
                     newTask.getEndTime().isAfter(task.getStartTime());
 
             if (taskHasIntersections) {
-                throw new TaskOverlapAnotherTaskException("Задача #" + newTask.getId() + " пересекается с задачей #" + task.getId());
+                throw new TaskOverlapAnotherTaskException("Задача #" + newTask.getId() + " пересекается с задачей #" +
+                        task.getId());
             }
         }
     }
