@@ -87,25 +87,31 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateTask(Task task) {
+    public Task updateTask(int id, Task task) {
         addNewPrioritizedTask(task);
-        tasks.put(task.getId(), task);
+        tasks.put(id, task);
+
+        return task;
     }
 
     @Override
-    public void updateEpic(Epic epic) {
-        epics.put(epic.getId(), epic);
+    public Epic updateEpic(int id, Epic epic) {
+        epics.put(id, epic);
         Epic oldEpic = epics.get(epic.getId());
         epic.setSubtasks(oldEpic.getSubtasks());
 
+        return epic;
+
     }
 
     @Override
-    public void updateSubtask(Subtask subtask) {
+    public Subtask updateSubtask(int id, Subtask subtask) {
         addNewPrioritizedTask(subtask);
-        subtasks.put(subtask.getId(), subtask);
+        subtasks.put(id, subtask);
         Epic epic = epics.get(subtask.getEpicId());
         epic.updateEpicStatusAndTiming(subtasks);
+
+        return subtask;
     }
 
     @Override

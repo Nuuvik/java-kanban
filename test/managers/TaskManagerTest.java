@@ -81,7 +81,7 @@ public abstract class TaskManagerTest {
     public void shouldUpdateTask() {
         Task task = manager.createTask(createTask());
         Task updatedTask = new Task(1, Status.IN_PROGRESS, "Updated Task", "Updated Task desc", Instant.ofEpochMilli(-386310686000L), 30);
-        manager.updateTask(updatedTask);
+        manager.updateTask(task.getId(), updatedTask);
         Task retrievedTask = manager.getTask(task.getId());
         assertEquals("Updated Task", retrievedTask.getTitle());
         assertEquals("Updated Task desc", retrievedTask.getDescription());
@@ -95,7 +95,7 @@ public abstract class TaskManagerTest {
     public void shouldNotUpdateTaskWithInvalidId() {
         Task task = manager.createTask(createTask());
         Task updatedTask = new Task(999, Status.IN_PROGRESS, "Updated Task", "Updated Task desc", Instant.ofEpochMilli(-386310686000L), 30);
-        manager.updateTask(updatedTask);
+        manager.updateTask(updatedTask.getId(), updatedTask);
         Task retrievedTask = manager.getTask(task.getId());
         assertNotEquals("Updated Task", retrievedTask.getTitle());
         assertNotEquals("Updated Task desc", retrievedTask.getDescription());
@@ -109,7 +109,7 @@ public abstract class TaskManagerTest {
     public void shouldUpdateEpic() {
         Epic epic = manager.createEpic(createEpic());
         Epic updatedEpic = new Epic(1, Status.IN_PROGRESS, "Updated Epic", "Updated Epic desc", Instant.ofEpochMilli(-386310666000L), 30);
-        manager.updateEpic(updatedEpic);
+        manager.updateEpic(epic.getId(), updatedEpic);
         Epic retrievedEpic = manager.getEpic(epic.getId());
         assertEquals("Updated Epic", retrievedEpic.getTitle());
         assertEquals("Updated Epic desc", retrievedEpic.getDescription());
@@ -124,7 +124,7 @@ public abstract class TaskManagerTest {
         Epic updatedEpic = new Epic(999, Status.IN_PROGRESS, "Updated Epic", "Updated Epic desc",
                 Instant.ofEpochMilli(-386310676000L), 30);
         epic.setSubtasks(updatedEpic.getSubtasks());
-        manager.updateEpic(updatedEpic);
+        manager.updateEpic(updatedEpic.getId(), updatedEpic);
         Epic retrievedEpic = manager.getEpic(epic.getId());
         assertNotEquals("Updated Epic", retrievedEpic.getTitle());
         assertNotEquals("Updated Epic desc", retrievedEpic.getDescription());
@@ -140,7 +140,7 @@ public abstract class TaskManagerTest {
         Subtask subtask = manager.createSubtask(createSubtask(epic));
 
         subtask.setStatus(Status.IN_PROGRESS);
-        manager.updateSubtask(subtask);
+        manager.updateSubtask(subtask.getId(), subtask);
 
         assertEquals(Status.IN_PROGRESS, manager.getSubtask(subtask.getId()).getStatus());
         assertEquals(Status.IN_PROGRESS, manager.getEpic(epic.getId()).getStatus());
@@ -152,7 +152,7 @@ public abstract class TaskManagerTest {
         Subtask subtask = manager.createSubtask(createSubtask(epic));
 
         subtask.setStatus(Status.DONE);
-        manager.updateSubtask(subtask);
+        manager.updateSubtask(subtask.getId(), subtask);
 
         assertEquals(Status.DONE, manager.getSubtask(subtask.getId()).getStatus());
         assertEquals(Status.DONE, manager.getEpic(epic.getId()).getStatus());
@@ -166,8 +166,8 @@ public abstract class TaskManagerTest {
 
         subtask1.setStatus(Status.DONE);
         subtask2.setStatus(Status.IN_PROGRESS);
-        manager.updateSubtask(subtask1);
-        manager.updateSubtask(subtask2);
+        manager.updateSubtask(subtask1.getId(), subtask1);
+        manager.updateSubtask(subtask2.getId(), subtask2);
 
         assertEquals(Status.IN_PROGRESS, manager.getEpic(epic.getId()).getStatus());
     }

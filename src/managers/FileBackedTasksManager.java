@@ -9,7 +9,7 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.*;
 
-public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
+public class FileBackedTasksManager extends InMemoryTaskManager  {
     private final Path path;
 
     public FileBackedTasksManager(Path path) {
@@ -53,18 +53,20 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
                 if (task.getId() > startId) startId = task.getId();
 
+                allTasks.put(task.getId(), task);
+
                 switch (TaskType.valueOf(type)) {
                     case TASK -> {
-                        allTasks.put(task.getId(), task);
+
                         tasks.put(task.getId(), task);
                     }
                     case EPIC -> {
-                        allTasks.put(task.getId(), task);
+
                         epics.put(task.getId(), (Epic) task);
                     }
                     case SUBTASK -> {
                         Subtask subtask = (Subtask) task;
-                        allTasks.put(task.getId(), task);
+
                         subtasks.put(task.getId(), subtask);
                         epics.get(subtask.getEpicId()).addSubtask(subtask);
                     }
@@ -73,9 +75,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
             List<Integer> historyList = historyFromString(rows[rows.length - 1]);
 
-            for (Integer id : historyList) {
-                historyManager.add(allTasks.get(id));
-            }
+            historyList.forEach(id -> historyManager.add(allTasks.get(id)));
 
         } catch (IOException err) {
             throw new ManagerSaveException("Ошибка при восстановлении данных");
@@ -127,21 +127,24 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     }
 
     @Override
-    public void updateTask(Task task) {
-        super.updateTask(task);
+    public Task updateTask(int id, Task task) {
+        Task updatedTask = super.updateTask(id, task);
         save();
+        return updatedTask;
     }
 
     @Override
-    public void updateEpic(Epic epic) {
-        super.updateEpic(epic);
+    public Epic updateEpic(int id, Epic epic) {
+        Epic updatedEpic = super.updateEpic(id, epic);
         save();
+        return updatedEpic;
     }
 
     @Override
-    public void updateSubtask(Subtask subtask) {
-        super.updateSubtask(subtask);
+    public Subtask updateSubtask(int id, Subtask subtask) {
+        Subtask updatedSubtask = super.updateSubtask(id, subtask);
         save();
+        return updatedSubtask;
     }
 
     @Override
@@ -168,7 +171,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         save();
     }
 
-    private void save() {
+    protected void save() {
         try {
             String head = "id,type,name,status,description,start time,duration,epic" + System.lineSeparator();
             String data = head +
