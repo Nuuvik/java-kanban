@@ -9,7 +9,7 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.*;
 
-public class FileBackedTasksManager extends InMemoryTaskManager  {
+public class FileBackedTasksManager extends InMemoryTaskManager {
     private final Path path;
 
     public FileBackedTasksManager(Path path) {

@@ -85,17 +85,20 @@ public class HttpTaskManagerTest extends TaskManagerTest {
 
         List<Task> tasksResponse = gson.fromJson(
                 client.send(getTasksRequest, HttpResponse.BodyHandlers.ofString()).body(),
-                new TypeToken<List<Task>>() {}.getType()
+                new TypeToken<List<Task>>() {
+                }.getType()
         );
 
         List<Epic> epicsResponse = gson.fromJson(
                 client.send(getEpicsRequest, HttpResponse.BodyHandlers.ofString()).body(),
-                new TypeToken<List<Epic>>() {}.getType()
+                new TypeToken<List<Epic>>() {
+                }.getType()
         );
 
         List<Subtask> subtasksResponse = gson.fromJson(
                 client.send(getSubtasksRequest, HttpResponse.BodyHandlers.ofString()).body(),
-                new TypeToken<List<Subtask>>() {}.getType()
+                new TypeToken<List<Subtask>>() {
+                }.getType()
         );
 
         assertEquals(1, tasksResponse.size());
@@ -171,17 +174,20 @@ public class HttpTaskManagerTest extends TaskManagerTest {
 
         List<Task> tasksResponse = gson.fromJson(
                 client.send(getTasksRequest, HttpResponse.BodyHandlers.ofString()).body(),
-                new TypeToken<List<Task>>() {}.getType()
+                new TypeToken<List<Task>>() {
+                }.getType()
         );
 
         List<Epic> epicsResponse = gson.fromJson(
                 client.send(getEpicsRequest, HttpResponse.BodyHandlers.ofString()).body(),
-                new TypeToken<List<Epic>>() {}.getType()
+                new TypeToken<List<Epic>>() {
+                }.getType()
         );
 
         List<Epic> subtasksResponse = gson.fromJson(
                 client.send(getSubtasksRequest, HttpResponse.BodyHandlers.ofString()).body(),
-                new TypeToken<List<Epic>>() {}.getType()
+                new TypeToken<List<Epic>>() {
+                }.getType()
         );
 
         assertEquals(0, tasksResponse.size());
