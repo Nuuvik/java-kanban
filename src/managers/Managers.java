@@ -1,11 +1,13 @@
 package managers;
 
 
+import java.net.URI;
+
 public class Managers {
 
 
-    public static TaskManager getDefault() {
-        return new InMemoryTaskManager();
+    public static TaskManager getDefault(URI uri) {
+        return new HttpTaskManager(uri);
     }
 
     static HistoryManager getDefaultHistory() {
