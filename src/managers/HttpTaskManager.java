@@ -28,32 +28,27 @@ public class HttpTaskManager extends FileBackedTasksManager {
         }
     }
 
+    private <T> T loadData(String key, TypeToken<T> typeToken) throws IOException, InterruptedException {
+        String jsonData = taskClient.load(key);
+        return gson.fromJson(jsonData, typeToken.getType());
+    }
+
     public void load() {
         try {
-            Map<Integer, Task> tasks = gson.fromJson(
-                    taskClient.load("tasks"),
-                    new TypeToken<HashMap<Integer, Task>>() {
-                    }.getType()
-            );
-            Map<Integer, Epic> epics = gson.fromJson(
-                    taskClient.load("epics"),
-                    new TypeToken<HashMap<Integer, Epic>>() {
-                    }.getType()
-            );
-            Map<Integer, Subtask> subtasks = gson.fromJson(
-                    taskClient.load("subtasks"),
-                    new TypeToken<HashMap<Integer, Subtask>>() {
-                    }.getType()
-            );
-            List<Task> historyList = gson.fromJson(
-                    taskClient.load("history"),
-                    new TypeToken<List<Task>>() {
-                    }.getType()
-            );
+            Map<Integer, Task> tasks = loadData("tasks", new TypeToken<HashMap<Integer, Task>>() {
+            });
+            Map<Integer, Epic> epics = loadData("epics", new TypeToken<HashMap<Integer, Epic>>() {
+            });
+            Map<Integer, Subtask> subtasks = loadData("subtasks", new TypeToken<HashMap<Integer, Subtask>>() {
+            });
+            List<Task> historyList = loadData("history", new TypeToken<List<Task>>() {
+            });
+
             HistoryManager history = new InMemoryHistoryManager();
             historyList.forEach(history::add);
 
-            int startId = Integer.parseInt(taskClient.load("startId"));
+            int startId = Integer.parseInt(loadData("startId", new TypeToken<String>() {
+            }));
 
             this.tasks = tasks;
             this.epics = epics;
@@ -65,6 +60,12 @@ public class HttpTaskManager extends FileBackedTasksManager {
             this.id = startId;
         } catch (IOException | InterruptedException exception) {
             System.out.println("Ошибка при восстановлении данных");
+            /* реализую после прохождения соответствующей темы :)
+        Обработка исключений: вместо того чтобы выводить сообщения об ошибках напрямую на консоль,
+         рассмотрите возможность использования логгера (например, java.util.logging.Logger или org.slf4j.Logger)
+          для логирования исключений и сообщений об ошибках. Это позволит контролировать уровень логирования
+           и более гибко настраивать его для различных сред выполнения.
+         */
         }
     }
 
