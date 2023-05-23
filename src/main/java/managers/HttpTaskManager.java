@@ -3,6 +3,8 @@ package managers;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import exceptions.ManagerSaveException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import server.KVTaskClient;
 import tasks.Epic;
 import tasks.Subtask;
@@ -18,6 +20,8 @@ import java.util.Map;
 public class HttpTaskManager extends FileBackedTasksManager {
     private final Gson gson = GsonUtils.getInstance();
     private final KVTaskClient taskClient;
+
+    private static final Logger log = LoggerFactory.getLogger(HttpTaskManager.class);
 
     public HttpTaskManager(URI uri) {
         super(null);
@@ -59,13 +63,8 @@ public class HttpTaskManager extends FileBackedTasksManager {
             this.prioritizedTasks.addAll(subtasks.values());
             this.id = startId;
         } catch (IOException | InterruptedException exception) {
-            System.out.println("Ошибка при восстановлении данных");
-            /* реализую после прохождения соответствующей темы :)
-        Обработка исключений: вместо того чтобы выводить сообщения об ошибках напрямую на консоль,
-         рассмотрите возможность использования логгера (например, java.util.logging.Logger или org.slf4j.Logger)
-          для логирования исключений и сообщений об ошибках. Это позволит контролировать уровень логирования
-           и более гибко настраивать его для различных сред выполнения.
-         */
+            log.error("Ошибка при восстановлении данных");
+
         }
     }
 
